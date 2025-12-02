@@ -33,4 +33,16 @@ public class PostServiceImpl implements PostService {
 
     }
 
+    @Override
+    public Post findById(Long postId) {
+        return postRepository.findById(postId)
+                .orElseThrow();
+    }
+
+    @Override
+    public PostResponse getPost(Long postId) {
+        Post post = findById(postId);
+        return PostResponse.from(post);
+    }
+
 }

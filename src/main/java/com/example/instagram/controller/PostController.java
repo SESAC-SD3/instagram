@@ -2,6 +2,7 @@ package com.example.instagram.controller;
 
 
 import com.example.instagram.dto.request.PostCreateRequest;
+import com.example.instagram.dto.response.PostResponse;
 import com.example.instagram.security.CustomUserDetails;
 import com.example.instagram.service.CustomUserDetailsService;
 import com.example.instagram.service.PostService;
@@ -12,10 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/posts")
@@ -44,5 +42,16 @@ public class PostController {
 
         return "redirect:/";
     }
+
+    @GetMapping("/{id}")
+    public String detail(
+            @PathVariable Long id,
+            Model model
+    ) {
+        PostResponse post = postService.getPost(id);
+        model.addAttribute("post", post);
+        return "post/detail";
+    }
+
 
 }
