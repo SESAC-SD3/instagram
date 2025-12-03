@@ -8,6 +8,7 @@ import com.example.instagram.dto.response.PostResponse;
 import com.example.instagram.security.CustomUserDetails;
 import com.example.instagram.service.CommentService;
 import com.example.instagram.service.PostService;
+import com.example.instagram.service.LikeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,6 +25,7 @@ import java.util.List;
 public class PostController {
     private final PostService postService;
     private final CommentService commentService;
+    private final LikeService likeService;
 
 
     @GetMapping("/new")
@@ -85,6 +87,15 @@ public class PostController {
 
 
         return "redirect:/posts/" + postId;
+    }
+
+    @PostMapping("{id}/like")
+    public String toggleLike(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        likeService.toggleLike(id, userDetails.getId());
+        return "redirect:/posts/" + id;
     }
 
 }
