@@ -6,6 +6,7 @@ import com.example.instagram.dto.response.PostResponse;
 import com.example.instagram.entity.Post;
 import com.example.instagram.entity.User;
 import com.example.instagram.repository.PostRepository;
+import com.example.instagram.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +52,15 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostResponse> getAllPosts() {
         return postRepository.findAllByOrderByCreatedAtDesc().stream()
+                .map(PostResponse::from)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PostResponse> getPostsByUsername(String username) {
+        User user = userService.findByUsername(username);
+
+        return postRepository.findByUserIdOrderByCreatedAtDesc(user.getId()).stream()
                 .map(PostResponse::from)
                 .collect(Collectors.toList());
     }
