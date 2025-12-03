@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.instagram.entity.Comment;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -37,5 +40,12 @@ public class CommentServiceImpl implements CommentService {
 
         Comment saved = commentRepository.save(comment);
         return CommentResponse.from(saved);
+    }
+
+    @Override
+    public List<CommentResponse> getComments(Long postId) {
+        return commentRepository.findByPostIdOrderByCreatedAtDesc(postId).stream()
+                .map(CommentResponse::from)
+                .collect(Collectors.toList());
     }
 }
