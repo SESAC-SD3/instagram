@@ -10,12 +10,6 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    private final View error;
-
-    public GlobalExceptionHandler(View error) {
-        this.error = error;
-    }
-
     // 404
     @ExceptionHandler(NoResourceFoundException.class)
     public String handleNoResourceFound(NoResourceFoundException ex) {
