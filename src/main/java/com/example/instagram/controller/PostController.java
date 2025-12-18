@@ -9,6 +9,7 @@ import com.example.instagram.security.CustomUserDetails;
 import com.example.instagram.service.CommentService;
 import com.example.instagram.service.PostService;
 import com.example.instagram.service.LikeService;
+import com.example.instagram.service.BookmarkService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,6 +28,7 @@ public class PostController {
     private final PostService postService;
     private final CommentService commentService;
     private final LikeService likeService;
+    private final BookmarkService bookmarkService;
 
 
     @GetMapping("/new")
@@ -66,6 +68,7 @@ public class PostController {
         model.addAttribute("comments", comments);
         model.addAttribute("liked", likeService.isLiked(id, userDetails.getId()));
         model.addAttribute("likeCount", likeService.getLikeCount(id));
+        model.addAttribute("bookmarked", bookmarkService.isBookmarked(id, userDetails.getId()));
         return "post/detail";
     }
 
@@ -101,6 +104,15 @@ public class PostController {
     ) {
         likeService.toggleLike(id, userDetails.getId());
         return "redirect:/posts/" + id;
+    }
+
+    @PostMapping("/{postId}/bookmark")
+    public String toggleBookmark(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        bookmarkService.toggleBookmark(postId, userDetails.getId());
+        return "redirect:/posts/" + postId;
     }
 
 }

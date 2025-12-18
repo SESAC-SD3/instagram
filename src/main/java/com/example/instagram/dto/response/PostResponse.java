@@ -22,6 +22,7 @@ public class PostResponse {
 
     private long commentCount;
     private long likeCount;
+    private boolean bookmarked;
 
     // Entity => DTO 변환
     public static PostResponse from(Post post) {
@@ -35,11 +36,12 @@ public class PostResponse {
                 .profileImageUrl(post.getUser().getProfileImageUrl())
                 .likeCount(0)
                 .commentCount(0)
+                .bookmarked(false)
                 .build();
     }
 
     // Entity => DTO 변환
-    public static PostResponse from(Post post, long commentCount, long likeCount) {
+    public static PostResponse from(Post post, long commentCount, long likeCount, boolean bookmarked) {
         return PostResponse.builder()
                 .id(post.getId())
                 .content(post.getContent())
@@ -50,6 +52,8 @@ public class PostResponse {
                 .profileImageUrl(post.getUser().getProfileImageUrl())
                 .likeCount(likeCount)
                 .commentCount(commentCount)
+                .bookmarked(bookmarked)
                 .build();
     }
+
 }
