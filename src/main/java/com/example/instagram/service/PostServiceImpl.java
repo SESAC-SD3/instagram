@@ -8,6 +8,7 @@ import com.example.instagram.entity.User;
 import com.example.instagram.exception.BusinessException;
 import com.example.instagram.exception.ErrorCode;
 import com.example.instagram.repository.*;
+import com.example.instagram.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -30,6 +31,7 @@ public class PostServiceImpl implements PostService {
     private final CommentRepository commentRepository;
     private final FileService fileService;
     private final FollowRepository followRepository;
+    private final BookmarkRepository bookmarkRepository;
 
     @Override
     @Transactional
@@ -95,7 +97,7 @@ public class PostServiceImpl implements PostService {
                 .map(post -> {
                     long likeCount = likeRepository.countByPostId(post.getId());
                     long commentCount = commentRepository.countByPostId(post.getId());
-                    return PostResponse.from(post, commentCount, likeCount);
+                    return PostResponse.from(post, commentCount, likeCount, false);
                 })
                 .collect(Collectors.toList());
     }
@@ -111,7 +113,8 @@ public class PostServiceImpl implements PostService {
                 .map(post -> {
                     long likeCount = likeRepository.countByPostId(post.getId());
                     long commentCount = commentRepository.countByPostId(post.getId());
-                    return PostResponse.from(post, commentCount, likeCount);
+                    boolean isBookmarked = bookmarkRepository.existsByPostIdAndUserId(post.getId(), userId);
+                    return PostResponse.from(post, commentCount, likeCount, isBookmarked);
                 })
                 .toList();
 
@@ -124,16 +127,16 @@ public class PostServiceImpl implements PostService {
     public Slice<PostResponse> getAllPostsPaging(Pageable pageable) {
         Slice<Post> posts = postRepository.findAllWithUserPaging(pageable);
 
-        List<PostResponse> postSlice = posts.getContent().stream()
+        List<PostResponse> content = posts.getContent().stream()
                 .map(post -> {
                     long likeCount = likeRepository.countByPostId(post.getId());
                     long commentCount = commentRepository.countByPostId(post.getId());
 
-                    return PostResponse.from(post, commentCount, likeCount);
+                    return PostResponse.from(post, commentCount, likeCount, false);
                 })
                 .toList();
 
-        return new SliceImpl<>(postSlice, pageable, posts.hasNext());
+        return new SliceImpl<>(content, pageable, posts.hasNext());
     }
 
 
@@ -145,7 +148,7 @@ public class PostServiceImpl implements PostService {
                 .map(post -> {
                     long likeCount = likeRepository.countByPostId(post.getId());
                     long commentCount = commentRepository.countByPostId(post.getId());
-                    return PostResponse.from(post, commentCount, likeCount);
+                    return PostResponse.from(post, commentCount, likeCount, false);
                 })
                 .toList();
 
